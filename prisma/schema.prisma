@@ -1,0 +1,155 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  plan          String    @default("free")
+  role          String    @default("user")
+  isActive      Boolean   @default(true)
+  accounts      Account[]
+  sessions      Session[]
+  monitors      Monitor[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+
+
+model Monitor {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  url       String
+  userId    String     @db.ObjectId
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  visitors  Visitor[]
+  pageViews PageView[]
+  events    Event[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([userId])
+}
+
+model Visitor {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  monitorId    String     @db.ObjectId
+  monitor      Monitor    @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  sessionToken String     @unique
+  country      String?
+  browser      String?
+  device       String?
+  os           String?
+  screenSize   String?
+  referrer     String?
+  pageViews    PageView[]
+  events       Event[]
+  fingerprintId String?
+  visitCount   Int        @default(1)
+  lastSeen     DateTime   @default(now())
+  createdAt    DateTime   @default(now())
+  lastActive   DateTime   @default(now())
+
+  @@index([monitorId, lastActive])
+  @@index([monitorId, fingerprintId])
+  @@index([monitorId, createdAt])
+}
+
+model PageView {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  monitorId    String   @db.ObjectId
+  monitor      Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  visitorId    String   @db.ObjectId
+  visitor      Visitor  @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  url          String
+  title        String?
+  city         String?
+  region       String?
+  latitude     Float?
+  longitude    Float?
+  timezone     String?
+  isp          String?
+  networkType  String?
+  isVpnOrProxy Boolean  @default(false)
+  botScore     Int      @default(0)
+  suspicious   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([monitorId, createdAt])
+  @@index([visitorId])
+}
+
+model Event {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  monitorId String   @db.ObjectId
+  monitor   Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  visitorId String   @db.ObjectId
+  visitor   Visitor  @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  name      String
+  data      String?
+  createdAt DateTime @default(now())
+
+  @@index([monitorId, createdAt])
+  @@index([visitorId])
+}
+
+model DailyMetric {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  monitorId         String   @db.ObjectId
+  date              DateTime
+  metricType        String   // e.g. "pageview", "visitor", "browser", "country", "device", "referrer"
+  metricValue       String   // e.g. "Chrome", "US", "/home"
+  count             Int      @default(0)
+  suspiciousTraffic Int      @default(0)
+  vpnTraffic        Int      @default(0)
+  botBlocked        Int      @default(0)
+
+  @@unique([monitorId, date, metricType, metricValue])
+}
+

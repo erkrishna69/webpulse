@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebPulse Test Client</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #0a0a0a;
+            color: #f3f4f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #111111;
+            border: 1px solid #1f1f1f;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #7c3aed;
+            margin-top: 0;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        p {
+            color: #9ca3af;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .instructions {
+            background-color: #1a1a1a;
+            border-left: 4px solid #7c3aed;
+            padding: 15px;
+            text-align: left;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        code {
+            color: #a78bfa;
+            font-family: monospace;
+            background-color: #2e1065;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>WebPulse Live Test Client</h1>
+        <p>This is a helper HTML page to test real-time website visitor analytics tracking.</p>
+
+        <div class="instructions">
+            <strong>Instructions:</strong>
+            <ol style="margin-top: 8px; padding-left: 20px;">
+                <li style="margin-bottom: 8px;">Open <code>test.html</code> in a text editor.</li>
+                <li style="margin-bottom: 8px;">Paste your <code>&lt;script&gt;</code> tracker tag right before the
+                    closing <code>&lt;/body&gt;</code> tag at the bottom of the file.</li>
+                <li style="margin-bottom: 8px;">Save the file and double-click to open it in your web browser.</li>
+                <li>Go back to the WebPulse Admin Real-Time log panel to see live tracking in action!</li>
+            </ol>
+        </div>
+
+        <div class="badge">
+            Client Simulation Page Active
+        </div>
+    </div>
+
+    <script
+        src="http://localhost:3000/tracker.js?id=6a31e7ac3a73b4357c70fd8d&token=33b9366690e68be04c8da00f8f7a11b36c14ab614b7f15dbb0c65f6a90a86d78"></script>
+
+</body>
+
+</html>
